@@ -1,0 +1,28 @@
+{
+  "name": "shogi-usi-failover",
+  "version": "1.0.0",
+  "description": "USI Shogi Engine Failover Tool",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/select766/shogi-usi-failover.git"
+  },
+  "keywords": [
+    "shogi"
+  ],
+  "author": "select766",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/select766/shogi-usi-failover/issues"
+  },
+  "homepage": "https://github.com/select766/shogi-usi-failover#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^13.7.0",
+    "typescript": "^3.7.5"
+  }
+}
