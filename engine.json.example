@@ -1,7 +1,17 @@
 {
     "engines": {
         "primary": {
-            "path": "Lesserkai.exe"
+            "path": "C:\\path\\to\\Lesserkai.exe",
+            "timeoutSec": 1
+        },
+        "backup": {
+            "path": "C:\\path\\to\\Lesserkai.exe",
+            "setoption": [
+                "USI_Ponder value false",
+                "USI_Hash value 256",
+                "BookFile value public.bin",
+                "UseBook value true"
+            ]
         }
     }
 }
