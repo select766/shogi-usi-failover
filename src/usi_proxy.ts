@@ -75,6 +75,7 @@ export class USIProxy {
       // ponderがstopされた際に必要なダミーのbestmove
       this.write("h", ["bestmove", "resign"]);
     }
+    this.write("h", ["info", "string", "primary engine error"]);
     this.stateHandler({ type: "primaryError" });
   }
 
@@ -85,8 +86,7 @@ export class USIProxy {
 
   handleBStartup(event: StateEvent): void {
     if (event.type === "primaryError") {
-      // TODO: そもそも対局開始すべきでない
-      this.startBRelay();
+      this.startHalt();
     } else {
       if (event.from === "b") {
         if (event.command[0] === "usiok") {
@@ -224,5 +224,13 @@ export class USIProxy {
         this.startBRelay();
       }
     }
+  }
+
+  startHalt(): void {
+    this.write("h", ["info", "string", "halt on error"]);
+    this.stateHandler = this.handleHalt.bind(this);
+  }
+
+  handleHalt(event: StateEvent): void {
   }
 }
