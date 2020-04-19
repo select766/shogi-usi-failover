@@ -38,7 +38,19 @@ export class USIProxy {
   }
 
   relay(event: StateEventCommand, engine: "p" | "b"): void {
-    const to = event.from === "h" ? engine : "h";
+    // hostとengine間のコマンドを相互に中継する
+    let to: USIProxyCommandTarget;
+    if (event.from === "h") {
+      to = engine;
+    } else {
+      if (event.from === engine) {
+        to = "h";
+      } else {
+        // 中継対象でない側から来た
+        // primaryがタイムアウトしたが、接続が復帰して続きのコマンドが来た場合に発生する
+        return;
+      }
+    }
     this.write(to, event.command);
   }
 
