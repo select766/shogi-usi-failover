@@ -23,6 +23,9 @@ Windows向け。バッチファイル部分をシェルスクリプトに置き�
   * 例: `go btime 10000`で思考開始後8秒経過後にプライマリエンジンが終了判定を受けたとして、バックアップエンジンには`go btime 10000`が送られる。しかし実際には2秒しか時間がない。
 * 最初の`go`コマンドがプライマリエンジンに届く前に異常が発生した場合のハンドリングは適当。手動で指しなおす前提。
 
+# ビルド済みバイナリ
+[https://github.com/select766/shogi-usi-failover/releases](https://github.com/select766/shogi-usi-failover/releases)からダウンロード可能。
+
 # ビルド
 node 10.x環境を想定。
 
@@ -30,6 +33,14 @@ node 10.x環境を想定。
 yarn
 yarn build
 ```
+
+## Windows向けパッケージング
+node.jsがない環境で実行できるようにするためのもの
+
+https://raw.githubusercontent.com/nodejs/node/master/LICENSE をダウンロードして`LICENSE-node.txt`として保存
+http://nodejs.org/dist/latest/win-x86/node.exe をダウンロードして`node.exe`として保存
+
+WSLなどで`windows-package.sh`を実行
 
 # 実行
 
@@ -95,3 +106,8 @@ yarn build
   * ponder中はタイムアウトはない。（すぐに思考が終わってコマンドを出力しない状態になる場合があるため）
 
 これらのエラーが発生したら、バックアップエンジンに切り替わる。プライマリエンジンにすでに送られたgoコマンドなどが必要に応じてバックアップエンジンに送られることで、どのタイミングで切り替えが行われても将棋所から見て通信が正しく行われる。
+
+なお、持ち時間や盤面の解釈機構は存在しない。
+
+# ライセンス
+MIT

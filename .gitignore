@@ -107,3 +107,7 @@ dist
 .vscode-test
 
 /engine.json
+/LICENSE-node.txt
+/node.exe
+/shogi-usi-failover
+/shogi-usi-failover.zip
