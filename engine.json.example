@@ -13,5 +13,17 @@
                 "UseBook value true"
             ]
         }
+    },
+    "logdir": "log",
+    "replace": {
+        "writehost": [
+            [
+                "^id name (.+)$",
+                "id name failover-$1",
+                ""
+            ]
+        ],
+        "writeprimary": [],
+        "writebackup": []
     }
 }

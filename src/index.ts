@@ -7,14 +7,47 @@ import { USIProxy, USIProxyCommandTarget } from "./usi_proxy";
 let config: any;
 let primaryEngine: ChildProcessWithoutNullStreams;
 let backupEngine: ChildProcessWithoutNullStreams;
+let logDst: NodeJS.WriteStream | fs.WriteStream = process.stderr;
 
 const writeLog = (data: any) => {
     data["timestamp"] = (new Date()).toISOString();
-    process.stderr.write(JSON.stringify(data) + "\n");
+    logDst.write(JSON.stringify(data) + "\n");
+};
+
+const compileReplacer = (replacers: [string, string, string?][]) => {
+    if (!replacers) {
+        return (command: string) => command;
+    }
+    const regexs = replacers.map(([pattern, replace, flags]) => [new RegExp(pattern, flags), replace] as [RegExp, string]);
+    const replacer = (command: string) => {
+        for (const iterator of regexs) {
+            command = command.replace(iterator[0], iterator[1]);
+        }
+        return command;
+    }
+    return replacer;
+};
+
+const openLog = (logdir?: string): void => {
+    if (!logdir) {
+        return;
+    }
+
+    const filePath = `${logdir}/usi-${Date.now()}-${process.pid}.log`;
+    logDst = fs.createWriteStream(filePath, "utf-8");
+    logDst.on('error', error => {
+        logDst = process.stderr;
+        writeLog({ type: "misc", message: `Failed to open log file: ${error}` });
+    });
 };
 
 const main = () => {
-    config = JSON.parse(fs.readFileSync("./engine.json", { encoding: "utf-8" }));
+    // node . [engine-setting-file]
+    config = JSON.parse(fs.readFileSync(process.argv[2] || "./engine.json", { encoding: "utf-8" }));
+    openLog(config.logdir);
+    const replacerWritehost = compileReplacer(config.replace?.writehost);
+    const replacerWriteprimary = compileReplacer(config.replace?.writeprimary);
+    const replacerWritebackup = compileReplacer(config.replace?.writebackup);
     primaryEngine = spawn(config.engines.primary.path, [], { shell: true, cwd: path.dirname(config.engines.primary.path) });//{shell: true}はWindowsでバッチファイルを利用可能にする
     backupEngine = spawn(config.engines.backup.path, [], { shell: true, cwd: path.dirname(config.engines.primary.path) });
     const parentReadBuffer = new ChunkBuffer();
@@ -121,15 +154,15 @@ const main = () => {
         switch (to) {
             case "h":
                 writeLog({ type: "process.stdout.write", command });
-                process.stdout.write(command.join(" ") + "\n");
+                process.stdout.write(replacerWritehost(command.join(" ")) + "\n");
                 break;
             case "p":
                 writeLog({ type: "primaryEngine.stdin.write", command });
-                primaryEngine.stdin.write(command.join(" ") + "\n", "ascii", () => { });
+                primaryEngine.stdin.write(replacerWriteprimary(command.join(" ")) + "\n", "ascii", () => { });
                 break;
             case "b":
                 writeLog({ type: "backupEngine.stdin.write", command });
-                backupEngine.stdin.write(command.join(" ") + "\n", "ascii", () => { });
+                backupEngine.stdin.write(replacerWritebackup(command.join(" ")) + "\n", "ascii", () => { });
                 break;
             default:
                 break;
