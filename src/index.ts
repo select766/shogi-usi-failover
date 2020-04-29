@@ -49,7 +49,7 @@ const main = () => {
     const replacerWriteprimary = compileReplacer(config.replace?.writeprimary);
     const replacerWritebackup = compileReplacer(config.replace?.writebackup);
     primaryEngine = spawn(config.engines.primary.path, [], { shell: true, cwd: path.dirname(config.engines.primary.path) });//{shell: true}はWindowsでバッチファイルを利用可能にする
-    backupEngine = spawn(config.engines.backup.path, [], { shell: true, cwd: path.dirname(config.engines.primary.path) });
+    backupEngine = spawn(config.engines.backup.path, [], { shell: true, cwd: path.dirname(config.engines.backup.path) });
     const parentReadBuffer = new ChunkBuffer();
     const primaryReadBuffer = new ChunkBuffer();
     const backupReadBuffer = new ChunkBuffer();

@@ -1,6 +1,6 @@
 {
   "name": "shogi-usi-failover",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "USI Shogi Engine Failover Tool",
   "main": "dist/index.js",
   "scripts": {
